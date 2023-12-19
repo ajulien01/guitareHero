@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="guitarehero" version="4">
+  <OBJECT>
+    <ID name="guitarehero" mc="Standard.Package" uid="c6d17eb7-50cb-49fa-9346-912b4287ad96"/>
+    <PID name="GuitareHero" mc="Standard.Project" uid="e09d06e0-88d3-44c3-a06c-1525de351b37"/>
+    <ATTRIBUTES>
+      <ATT name="IsInstantiable">false</ATT>
+      <ATT name="IsAbstract">false</ATT>
+      <ATT name="IsLeaf">false</ATT>
+      <ATT name="IsRoot">false</ATT>
+      <ATT name="Visibility">Public</ATT>
+      <ATT name="Name"><![CDATA[guitarehero]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES>
+      <COMP relation="OwnedElement">
+        <COMPID name="Client" mc="Standard.Class" uid="b1255a13-519a-4450-89f5-0f7699172d92"/>
+        <COMPID name="QTcpSocket" mc="Standard.Class" uid="9f66489f-32b3-4e54-9113-142e53c8a972"/>
+        <COMPID name="QElipseItmem" mc="Standard.Class" uid="4c2e2aa4-8fb0-4809-a871-3985bd135f3f"/>
+      </COMP>
+      <COMP relation="Product">
+        <COMPID name="Client" mc="Standard.ClassDiagram" uid="0952e5cf-9b31-454e-86d4-dfa28b08e4eb"/>
+      </COMP>
+    </DEPENDENCIES>
+  </OBJECT>
+</EXT>
