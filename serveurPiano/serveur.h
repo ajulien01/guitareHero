@@ -5,6 +5,7 @@
 #include <QAbstractSocket>
 #include <QTcpServer>
 #include "client.h"
+#define NBPOINT 2000
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Serveur; }
@@ -25,13 +26,24 @@ private slots:
     void onQTcpSocket_errorOccured(QAbstractSocket::SocketError socketError);
 
     void on_pushButtonLancerServeur_clicked();
-
-    void recupererPseudo();
+    float calculerScore(float newScore,int indexClient);
+    void envoyerScore();
+    void envoyerPseudo();
+    void envoyerPret();
     int getIndexClient(QTcpSocket *client);
+    int choixMusique();
+    void envoyerMusique();
+    //generateur de coordonnées
+    int generValeurAleatoire();
+    void envoyerCoordonnees();
+    double vitesseJeux();
+
 private:
     Ui::Serveur *ui;
     QList<Client *> listeClients;
     QTcpServer *socketEcoute;
-
+    int nbJoueur=0;
+    QTimer* timer;
+    QList<int> valeurAleatoire;
 };
 #endif // SERVEUR_H

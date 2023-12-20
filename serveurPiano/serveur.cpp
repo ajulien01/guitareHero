@@ -1,5 +1,9 @@
 #include "serveur.h"
 #include "ui_serveur.h"
+#include <QBuffer>
+#include <QTextStream>
+#include <QRandomGenerator>
+#include <QTimer>
 
 Serveur::Serveur(QWidget *parent)
     : QWidget(parent)
@@ -34,6 +38,7 @@ void Serveur::onQTcpSocket_disconnected()
         listeClients.removeAt(index);
     }
     // afficher un message avec l'ip et le port du client deconnecté
+    nbJoueur--;
     ui->textEditMessage->append("Deconnexion" + client->peerAddress().toString() + " " + client->peerPort());
 }
 
@@ -42,10 +47,12 @@ void Serveur::onQTcpSocket_readyRead()
     quint16 taille=0;
     QChar commande;
     QString pseudo;
-    int indexClient;
-
+    int score;
+    bool pret;
+    QString chaine;
 
     QTcpSocket *client=qobject_cast<QTcpSocket *>(sender ());
+    int indexClient =getIndexClient(client);
 
     if(client->bytesAvailable() >= (quint64)sizeof(taille))
     {
@@ -58,19 +65,32 @@ void Serveur::onQTcpSocket_readyRead()
             {
             //pseudo
             case 'P':
-                in >> pseudo;
+                in >> pseudo ;
                 listeClients.at(indexClient)->setPseudo(pseudo);
+                ui->textEditMessage->append(pseudo+"vient de se connecter");
+                envoyerPseudo();
                 break;
-            //touche piano
-            case 'A':
 
+            case 'S':
+                //score
+                in >> score;
+                //calcul du nouveau score
+                score = calculerScore(score,indexClient);
+                //ajout du nouveau score dans liste client
+                listeClients.at(indexClient)->setScoreJoueur(score);
+                QTextStream(&chaine)<<"score "<<listeClients.at(indexClient)->getPseudo()<<":"<<score;
+                ui->textEditMessage->append(chaine);
                 break;
-            case 'Z':
+            case 'Q':
+                //pret ou pas
+                in >> pret;
+                //joueur liste pret
+                listeClients.at(indexClient)->setPret(pret);
+                envoyerPret();
+                QTextStream(&chaine)<<listeClients.at(indexClient)->getPseudo() << ":" << listeClients.at(indexClient)->getPret();
+                ui->textEditMessage->append(chaine);
                 break;
-            case 'E':
-                break;
-            case 'R':
-                break;
+
             }
         }
     }
@@ -90,6 +110,7 @@ void Serveur::onQTcpSocket_newConnection()
     Client *nouveauClient=new Client();
     nouveauClient->setSockClient(client);
     listeClients.append(nouveauClient);
+    nbJoueur++;
     ui->textEditMessage->append("nouvelle connexion");
 }
 
@@ -109,25 +130,219 @@ void Serveur::on_pushButtonLancerServeur_clicked()
     }
 }
 
-void Serveur::getPseudoClient()
+float Serveur::calculerScore(float newScore, int indexClient)
 {
+    float scoreJoueur = listeClients.at(indexClient)->getScoreJoueur();
+    scoreJoueur += newScore;
+    return newScore;
+}
 
+void Serveur::envoyerScore()
+{
+    quint16 taille=0;
+    QBuffer tampon;
+    QChar commande('S');
+    //envoie score
+
+    QList<float> scoreJoueurs;
+
+    //construire la liste des pret pas pret
+    foreach(Client *client, listeClients)
+    {
+        scoreJoueurs.append(client->getScoreJoueur());
+    }
+    // envoyer à tous les clients
+    // construction de la trame à envoyer au client;
+    tampon.open(QIODevice::WriteOnly);
+    // association du tampon au flux de sortie
+    QDataStream out(&tampon);
+    // construction de la trame
+    out<<taille<<commande<<scoreJoueurs<<nbJoueur;
+    // calcul de la taille de la trame
+    taille=(static_cast<quint16>(tampon.size()))-sizeof(taille);
+    // placement sur la premiere position du flux pour pouvoir modifier la taille
+    tampon.seek(0);
+    //modification de la trame avec la taille reel de la trame
+    out<<taille;
+    foreach(Client *client, listeClients)
+    {
+
+        client->getSockClient()->write(tampon.buffer());
+    }
+}
+
+void Serveur::envoyerPseudo()
+{
+    quint16 taille=0;
+    QBuffer tampon;
+    QChar commande('P');
+
+    // generation de liste des pseudos
+
+    QList <QString> pseudoClients;
+
+    //construire la liste des pseudos
+    foreach(Client *client, listeClients)
+    {
+        pseudoClients.append(client->getPseudo());
+
+    }
+    // envoyer à tous les clients
+    // construction de la trame à envoyer au client    qDebug() << "reserver";
+    tampon.open(QIODevice::WriteOnly);
+    // association du tampon au flux de sortie
+    QDataStream out(&tampon);
+    // construction de la trame
+    out<<taille<<commande<<pseudoClients<<nbJoueur;
+    qDebug() << "envoyer pseudo :" << nbJoueur;
+
+    // calcul de la taille de la trame
+    taille=(static_cast<quint16>(tampon.size()))-sizeof(taille);
+    // placement sur la premiere position du flux pour pouvoir modifier la taille
+    tampon.seek(0);
+    //modification de la trame avec la taille reel de la trame
+    out<<taille;
+    foreach(Client *client, listeClients)
+    {
+
+        client->getSockClient()->write(tampon.buffer());
+    }
+
+}
+
+void Serveur::envoyerPret()
+{
+    quint16 taille=0;
+    QBuffer tampon;
+    QChar commande('Q');
+    //envoie pret pas pret
+
+    QList<bool> clientsPret;
+
+    //construire la liste des pret pas pret
+    foreach(Client *client, listeClients)
+    {
+        clientsPret.append(client->getPret());
+    }
+    // envoyer à tous les clients
+    // construction de la trame à envoyer au client;
+    tampon.open(QIODevice::WriteOnly);
+    // association du tampon au flux de sortie
+    QDataStream out(&tampon);
+    // construction de la trame
+    out<<taille<<commande<<clientsPret<<nbJoueur;
+    // calcul de la taille de la trame
+    taille=(static_cast<quint16>(tampon.size()))-sizeof(taille);
+    // placement sur la premiere position du flux pour pouvoir modifier la taille
+    tampon.seek(0);
+    //modification de la trame avec la taille reel de la trame
+    out<<taille;
+    foreach(Client *client, listeClients)
+    {
+
+        client->getSockClient()->write(tampon.buffer());
+    }
 }
 
 int Serveur::getIndexClient(QTcpSocket *client)
 {
+    int index = -1;
     foreach(Client *clientCourant, listeClients)
     {
         if (clientCourant->getSockClient() == client)
         {
-            int index = listeClients.indexOf(clientCourant);
-            return index;
-        }
-        else
-        {
-            int index = -1;
-            return index;
+            index = listeClients.indexOf(clientCourant);
         }
     }
+    return index;
 }
+
+int Serveur::choixMusique()
+{
+    int valeurAleatoire = QRandomGenerator::global()->bounded(1, 3);
+    return valeurAleatoire;
+}
+
+void Serveur::envoyerMusique()
+{
+    quint16 taille=0;
+    QBuffer tampon;
+    QChar commande('M');
+    int musique;
+    //envoie titre musique
+
+    musique = choixMusique();
+
+    // envoyer à tous les clients
+    // construction de la trame à envoyer au client;
+    tampon.open(QIODevice::WriteOnly);
+    // association du tampon au flux de sortie
+    QDataStream out(&tampon);
+    // construction de la trame
+    out<<taille<<commande<<musique;
+    qDebug() << "musique:" << musique;
+
+    // calcul de la taille de la trame
+    taille=(static_cast<quint16>(tampon.size()))-sizeof(taille);
+    // placement sur la premiere position du flux pour pouvoir modifier la taille
+    tampon.seek(0);
+    //modification de la trame avec la taille reel de la trame
+    out<<taille;
+    foreach(Client *client, listeClients)
+    {
+
+        client->getSockClient()->write(tampon.buffer());
+    }
+
+}
+
+int Serveur::generValeurAleatoire()
+{
+    int valeurAleatoire = QRandomGenerator::global()->bounded(1, 5);
+    qDebug() << "Valeur aléatoire : " << valeurAleatoire;//debug
+    return valeurAleatoire;
+}
+
+void Serveur::envoyerCoordonnees()
+{
+    quint16 taille=0;
+    QBuffer tampon;
+    QChar commande('C');
+
+    QList<int> coordonnees;
+    for(int i= 0 ; i < NBPOINT; i++)
+    {
+        coordonnees.append(generValeurAleatoire());
+    }
+
+    // envoyer à tous les clients
+    // construction de la trame à envoyer au client;
+    tampon.open(QIODevice::WriteOnly);
+    // association du tampon au flux de sortie
+    QDataStream out(&tampon);
+    // construction de la trame
+    out<<taille<<commande<<coordonnees;
+    // calcul de la taille de la trame
+    taille=(static_cast<quint16>(tampon.size()))-sizeof(taille);
+    // placement sur la premiere position du flux pour pouvoir modifier la taille
+    tampon.seek(0);
+    //modification de la trame avec la taille reel de la trame
+    out<<taille;
+    foreach(Client *client, listeClients)
+    {
+
+        client->getSockClient()->write(tampon.buffer());
+    }
+}
+
+double Serveur::vitesseJeux()
+{
+    // Crée un minuteur avec une durée de 1 seconde
+
+    timer->setInterval(1000);
+
+
+}
+
+
 

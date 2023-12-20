@@ -5,17 +5,12 @@ Client::Client()
 
 }
 
-int Client::getScoreJoueur() const
+float Client::getScoreJoueur() const
 {
     return scoreJoueur;
 }
 
-const QString &Client::getPseudo() const
-{
-    return pseudo;
-}
-
-void Client::setScoreJoueur(int newScoreJoueur)
+void Client::setScoreJoueur(float newScoreJoueur)
 {
     scoreJoueur = newScoreJoueur;
 }
@@ -33,4 +28,19 @@ void Client::setSockClient(QTcpSocket *newSockClient)
 QTcpSocket *Client::getSockClient() const
 {
     return sockClient;
+}
+
+bool Client::getPret() const
+{
+    return pret;
+}
+
+void Client::setPret(bool newPret)
+{
+    pret = newPret;
+}
+
+const QString &Client::getPseudo() const
+{
+    return pseudo;
 }
