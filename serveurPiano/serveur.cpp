@@ -89,6 +89,8 @@ void Serveur::onQTcpSocket_readyRead()
                 envoyerPret();
                 QTextStream(&chaine)<<listeClients.at(indexClient)->getPseudo() << ":" << listeClients.at(indexClient)->getPret();
                 ui->textEditMessage->append(chaine);
+
+            // case envoie des coordonnees au clients
                 break;
 
             }
@@ -275,7 +277,8 @@ void Serveur::envoyerPret()
 {
     quint16 taille=0;
     QBuffer tampon;
-    QChar commande('Q');
+    int nbPret=0;
+    bool start=false;
     //envoie pret pas pret
 
     QList<bool> clientsPret;
@@ -284,14 +287,32 @@ void Serveur::envoyerPret()
     foreach(Client *client, listeClients)
     {
         clientsPret.append(client->getPret());
+        if(client->getPret()==true)
+            nbPret++;
     }
+
+    if(nbPret == nbJoueur && nbJoueur>=1)
+    {
+        start=true;
+       // envoyerCoordonnees();
+    }
+
+    QList<int> coordonnees;
+
+    for(int i= 0 ; i < NBPOINT; i++)
+    {
+        coordonnees.append(generValeurAleatoire());
+    }
+
+    QChar commande('Q');
+
     // envoyer à tous les clients
     // construction de la trame à envoyer au client;
     tampon.open(QIODevice::WriteOnly);
     // association du tampon au flux de sortie
     QDataStream out(&tampon);
     // construction de la trame
-    out<<taille<<commande<<clientsPret<<nbJoueur;
+    out<<taille<<commande<<coordonnees<<clientsPret<<nbJoueur<<start;
     // calcul de la taille de la trame
     taille=(static_cast<quint16>(tampon.size()))-sizeof(taille);
     // placement sur la premiere position du flux pour pouvoir modifier la taille
@@ -304,6 +325,8 @@ void Serveur::envoyerPret()
         client->getSockClient()->write(tampon.buffer());
     }
 }
+
+
 
 int Serveur::getIndexClient(QTcpSocket *client)
 {
@@ -360,7 +383,7 @@ void Serveur::envoyerMusique()
 int Serveur::generValeurAleatoire()
 {
     int valeurAleatoire = QRandomGenerator::global()->bounded(1, 5);
-    qDebug() << "Valeur aléatoire : " << valeurAleatoire;//debug
+    //qDebug() << "Valeur aléatoire : " << valeurAleatoire;//debug
     return valeurAleatoire;
 }
 
@@ -369,7 +392,7 @@ void Serveur::envoyerCoordonnees()
     quint16 taille=0;
     QBuffer tampon;
     QChar commande('C');
-
+    qDebug() << "envoi de coordonnee";
     QList<int> coordonnees;
     for(int i= 0 ; i < NBPOINT; i++)
     {

@@ -5,7 +5,7 @@
 #include <QAbstractSocket>
 #include <QTcpServer>
 #include "client.h"
-#define NBPOINT 2000
+#define NBPOINT 200
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Serveur; }
