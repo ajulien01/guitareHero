@@ -260,6 +260,7 @@ void InterfacePrincipale::deplacerFormesVersLeBas()
             maScene->removeItem(item);
         }
     }
+
 }
 
 void InterfacePrincipale::keyPressEvent(QKeyEvent* event)
@@ -283,7 +284,9 @@ void InterfacePrincipale::keyPressEvent(QKeyEvent* event)
         // Traitez les autres touches ici si nécessaire
         break;
     }
+
     emit keyPressed(point);
+    initialiserScore();
 }
 
 
@@ -334,24 +337,26 @@ int InterfacePrincipale::getNbDeJoueurs() const
 void InterfacePrincipale::setNbDeJoueurs(int newNbDeJoueurs)
 {
     nbDeJoueurs = newNbDeJoueurs;
+    qDebug () << "Set nb joueur : " << nbDeJoueurs;
 }
 
 void InterfacePrincipale::initialiserScore()
 {
     switch (nbDeJoueurs){
-    case '1' :
+
+    case 1:
         ui->lcdNumberScoreJ1->display(score.at(0));
         break;
-    case '2' :
+    case 2:
         ui->lcdNumberScoreJ1->display(score.at(0));
         ui->lcdNumberScoreJ2->display(score.at(1));
         break;
-    case '3' :
+    case 3:
         ui->lcdNumberScoreJ1->display(score.at(0));
         ui->lcdNumberScoreJ2->display(score.at(1));
         ui->lcdNumberScoreJ3->display(score.at(2));
         break;
-    case '4' :
+    case 4:
         ui->lcdNumberScoreJ1->display(score.at(0));
         ui->lcdNumberScoreJ2->display(score.at(1));
         ui->lcdNumberScoreJ3->display(score.at(2));
@@ -367,6 +372,7 @@ void InterfacePrincipale::timerJeux()//a enlever
     QTimer *timer = new QTimer(this);
     timer->setInterval(1000);
     connect(timer,&QTimer::timeout,this,&InterfacePrincipale::genererObjet);
+
     timer->start();
 }
 

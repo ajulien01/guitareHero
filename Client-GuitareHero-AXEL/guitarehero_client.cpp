@@ -245,7 +245,8 @@ void GuitareHero_Client::onQTcpSocket_readyRead()
                 break ;
             case 'S' :
                 in >> scoreJoueurs >> nombreDeJoueurs;
-                qDebug() << "score : " [ scoreJoueurs.at(0)] ;
+                qDebug() << "nb joueur:" << nombreDeJoueurs;
+                qDebug() << "score : " << scoreJoueurs.at(0);
                     jeux->setScore(scoreJoueurs);
                     jeux->setNbDeJoueurs(nombreDeJoueurs);
                 break;
