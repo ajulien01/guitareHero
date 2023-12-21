@@ -15,11 +15,16 @@ public:
     bool getPret() const;
     void setPret(bool newPret);
 
+    int getCombo() const;
+    void setCombo(int newCombo);
+
 private:
     float scoreJoueur;
     QString pseudo;
     QTcpSocket *sockClient;
     bool pret=false;
+    int combo;
+    int vitesse = 1000;//vitesse par defaut pour le timer 1 sec
 
 };
 

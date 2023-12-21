@@ -34,3 +34,33 @@ QTcpSocket *Client::getSockClient() const
 {
     return sockClient;
 }
+
+bool Client::getPret() const
+{
+    return pret;
+}
+
+void Client::setPret(bool newPret)
+{
+    pret = newPret;
+}
+
+int Client::getCombo() const
+{
+    return combo;
+}
+
+void Client::setCombo(int newCombo)
+{
+    combo = newCombo;
+}
+
+int Client::getVitesse() const
+{
+    return vitesse;
+}
+
+void Client::setVitesse(int newVitesse)
+{
+    vitesse = newVitesse;
+}

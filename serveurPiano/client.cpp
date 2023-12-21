@@ -40,6 +40,16 @@ void Client::setPret(bool newPret)
     pret = newPret;
 }
 
+int Client::getCombo() const
+{
+    return combo;
+}
+
+void Client::setCombo(int newCombo)
+{
+    combo = newCombo;
+}
+
 const QString &Client::getPseudo() const
 {
     return pseudo;

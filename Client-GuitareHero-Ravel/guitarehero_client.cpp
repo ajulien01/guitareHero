@@ -10,20 +10,6 @@ GuitareHero_Client::GuitareHero_Client(QWidget *parent)
 {
     ui->setupUi(this);
     socketClient = new QTcpSocket(this);
-    /*  QGridLayout *grille= new QGridLayout (this);
-     // Placement sur la grille des objets présents sur ui
-     // les labels
-     grille->addWidget(ui->labelAdresseServeur,TAILLE,0,1,5);
-     grille->addWidget(ui->labelNumeroPort,TAILLE,6,1,5);
-     grille->addWidget(ui->labelInformation,TAILLE+3,12,1,5);
-     // les QLineEdit adresse et port
-     grille->addWidget(ui->lineEditAdresseServeur,TAILLE+1,0,1,5);
-     grille->addWidget(ui->spinBoxPortServeur,TAILLE+1,6,1,5);
-     // les QPushButton connexion et quitter
-     grille->addWidget(ui->pushButtonConnexion,TAILLE+2,0,1,5);
-     grille->addWidget(ui->pushButtonQuitter,TAILLE+2,6,1,5);
-     //connection signal/slot
-     */
     connect(socketClient, &QTcpSocket::connected, this, &::GuitareHero_Client::onQTcpSocket_connected);
     connect(socketClient, &QTcpSocket::disconnected, this, &::GuitareHero_Client::onQTcpSocket_disconnected);
     connect(socketClient, &QTcpSocket::readyRead, this, &::GuitareHero_Client::onQTcpSocket_readyRead);

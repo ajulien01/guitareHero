@@ -15,7 +15,7 @@ public:
         QTcpSocket *getSockClient() const;
 
     private:
-        int scoreJoueur;
+        float scoreJoueur;
         QString pseudo;
         QTcpSocket *sockClient;
 };

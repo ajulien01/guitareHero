@@ -27,6 +27,7 @@ private slots:
 
     void on_pushButtonLancerServeur_clicked();
     float calculerScore(float newScore,int indexClient);
+    void envoyerComboVitesse(int combo,float multiplicateurTimer);
     void envoyerScore();
     void envoyerPseudo();
     void envoyerPret();
@@ -36,7 +37,7 @@ private slots:
     //generateur de coordonnées
     int generValeurAleatoire();
     void envoyerCoordonnees();
-    double vitesseJeux();
+
 
 private:
     Ui::Serveur *ui;

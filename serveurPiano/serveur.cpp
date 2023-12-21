@@ -133,9 +133,70 @@ void Serveur::on_pushButtonLancerServeur_clicked()
 float Serveur::calculerScore(float newScore, int indexClient)
 {
     float scoreJoueur = listeClients.at(indexClient)->getScoreJoueur();
-    scoreJoueur += newScore;
+    if(newScore > 0)
+    {
+        scoreJoueur += newScore;
+        //combo
+        if(scoreJoueur >= 10 && scoreJoueur < 50)
+        {
+            //reduire timer de 10%
+            //envoyer combo x2
+            envoyerComboVitesse(2,0.10);
+        }
+
+        if(scoreJoueur >= 50 && scoreJoueur <100)
+        {
+            //reduire timer de 20%
+            //envoyer combo x4
+            envoyerComboVitesse(4,0.20);
+        }
+
+        if(scoreJoueur == 100)
+        {
+            //reduire timer de 30%
+            //envoyer combo x6
+            envoyerComboVitesse(6,0.30);
+        }
+    }
+    else if(newScore == 0)
+    {
+        if(scoreJoueur > 0)
+            scoreJoueur --;
+
+        //remettre timer initiale et combo à 0
+        if(scoreJoueur < 30)
+            envoyerComboVitesse(0,1);
+    }
+
     return newScore;
 }
+
+void Serveur::envoyerComboVitesse(int combo, float multiplicateurTimer)
+{
+    quint16 taille=0;
+    QBuffer tampon;
+    QChar commande('V');
+    //envoie combo et vitesse
+
+    // construction de la trame à envoyer au client;
+    tampon.open(QIODevice::WriteOnly);
+    // association du tampon au flux de sortie
+    QDataStream out(&tampon);
+    // construction de la trame
+    out<<taille<<commande<<combo<<multiplicateurTimer;
+    // calcul de la taille de la trame
+    taille=(static_cast<quint16>(tampon.size()))-sizeof(taille);
+    // placement sur la premiere position du flux pour pouvoir modifier la taille
+    tampon.seek(0);
+    //modification de la trame avec la taille reel de la trame
+    out<<taille;
+    foreach(Client *client, listeClients)
+    {
+
+        client->getSockClient()->write(tampon.buffer());
+    }
+}
+
 
 void Serveur::envoyerScore()
 {
@@ -333,15 +394,6 @@ void Serveur::envoyerCoordonnees()
 
         client->getSockClient()->write(tampon.buffer());
     }
-}
-
-double Serveur::vitesseJeux()
-{
-    // Crée un minuteur avec une durée de 1 seconde
-
-    timer->setInterval(1000);
-
-
 }
 
 
