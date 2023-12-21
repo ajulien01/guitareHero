@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/sounds">
+        <file>babyshark.mp3</file>
+        <file>jinglebells.mp3</file>
+        <file>lastchristmas.mp3</file>
+        <file>ping.mp3</file>
+        <file>punch.mp3</file>
+    </qresource>
+</RCC>

@@ -8,6 +8,8 @@
 #include <QBrush>
 #include <QPen>
 #include <QTimer>
+#include <QMediaPlayer>
+#include <QAudioOutput>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class InterfacePrincipale; }
@@ -38,7 +40,10 @@ public:
     int getNbDeJoueurs() const;
 
     void setNbDeJoueurs(int newNbDeJoueurs);
-
+    //son
+    void toucheSound();
+    void colisionSound();
+    void musiqueSound();
 private:
     Ui::InterfacePrincipale *ui;
     QGraphicsScene *maScene;
@@ -65,7 +70,13 @@ private:
     int genererValeurAleatoire();
     int posCourante;
     bool start;
-
+    //son
+    QMediaPlayer touche;
+    QAudioOutput sortieAudioTouche;
+    QMediaPlayer colision;
+    QAudioOutput sortieAudioColision;
+    QMediaPlayer musique;
+    QAudioOutput musiquefond;
     signals:
         void keyPressed(int score);
 

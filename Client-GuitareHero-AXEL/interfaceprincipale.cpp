@@ -76,9 +76,23 @@ InterfacePrincipale::InterfacePrincipale(bool start , QWidget *parent)
     maVue->setScene(maScene);
     maVue->show();
     posCourante=0;
-    //
+    //son
+    //son touche
+    touche.setAudioOutput(&sortieAudioTouche);
+    touche.setSource(QUrl("qrc:/sounds/ping.mp3")); //origine du fichier son
+    sortieAudioTouche.setVolume(100);
 
+    //son colision
+    colision.setAudioOutput(&sortieAudioColision);
+    colision.setSource(QUrl("qrc:/sounds/punch.mp3")); //origine du fichier son
+    sortieAudioColision.setVolume(1);
 
+    //son musique
+    musique.setAudioOutput(&musiquefond);
+    musique.setSource(QUrl("qrc:/sounds/lastchristmas.mp3")); //origine du fichier son
+    musiquefond.setVolume(100);
+
+    musique.play();
 }
 
 InterfacePrincipale::~InterfacePrincipale()
@@ -175,8 +189,10 @@ int InterfacePrincipale::verifierCoordonneesCarres()
                 maScene->removeItem(carre);
                 // envoyer 1 avec signals
                 point = 1 ;
+                colisionSound();
             } else {
                 qDebug() << "La coordonnée x du carré n'est pas entre 540 et 560.";
+                toucheSound();
             }
         }
     }
@@ -195,9 +211,11 @@ int InterfacePrincipale::verifierCoordonneesCercle()
                 qDebug() << "La coordonnée x du cercle est entre 540 et 560.";
                 maScene->removeItem(cercle);
                 // envoyer 1 avec signals
+                colisionSound();
                 point = 1 ;
             } else {
                 qDebug() << "La coordonnée x du cercle n'est pas entre 540 et 560.";
+                toucheSound();
             }
         }
     }
@@ -217,8 +235,10 @@ int InterfacePrincipale::verifierCoordonneesTriangle()
                 maScene->removeItem(triangle);
                 // envoyer 1 avec signals
                 point = 1 ;
+                colisionSound();
             } else {
                 qDebug() << "La coordonnée x du triangle n'est pas entre 540 et 560.";
+                toucheSound();
             }
         }
     }
@@ -238,9 +258,10 @@ int InterfacePrincipale::verifierCoordonneesLosange()
                 maScene->removeItem(losange);
                 // envoyer 1 avec signals
                 point = 1 ;
+                colisionSound();
             } else {
                 qDebug() << "La coordonnée x du losange n'est pas entre 540 et 560.";
-
+                toucheSound();
             }
         }
     }
@@ -338,6 +359,21 @@ void InterfacePrincipale::setNbDeJoueurs(int newNbDeJoueurs)
 {
     nbDeJoueurs = newNbDeJoueurs;
     qDebug () << "Set nb joueur : " << nbDeJoueurs;
+}
+
+void InterfacePrincipale::toucheSound()
+{
+    touche.play();
+}
+
+void InterfacePrincipale::musiqueSound()
+{
+    musique.play();
+}
+
+void InterfacePrincipale::colisionSound()
+{
+    colision.play();
 }
 
 void InterfacePrincipale::initialiserScore()
