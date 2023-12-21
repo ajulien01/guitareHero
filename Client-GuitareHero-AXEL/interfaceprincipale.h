@@ -31,6 +31,14 @@ public:
     bool getStart() const;
     void setStart(bool newStart);
 
+    const QList<int> &getScore() const;
+
+    void setScore(const QList<int> &newScore);
+
+    int getNbDeJoueurs() const;
+
+    void setNbDeJoueurs(int newNbDeJoueurs);
+
 private:
     Ui::InterfacePrincipale *ui;
     QGraphicsScene *maScene;
@@ -41,19 +49,25 @@ private:
     QGraphicsPolygonItem *losange;
     QList<QGraphicsItem*> objetsGeneres;
     QList<int> listePositionsObjets;
+    QList<int> score;
+    int nbDeJoueurs ;
     QTimer timer ;
+    void initialiserScore();
 
 
     void actionTimer(); //
     void deplacerFormesVersLeBas();
 
-    void verifierCoordonneesCarres();
-    void verifierCoordonneesCercle();
-    void verifierCoordonneesTriangle();
-    void verifierCoordonneesLosange();
+    int  verifierCoordonneesCarres();
+    int verifierCoordonneesCercle();
+    int verifierCoordonneesTriangle();
+    int verifierCoordonneesLosange();
     int genererValeurAleatoire();
     int posCourante;
     bool start;
+
+    signals:
+        void keyPressed(int score);
 
 
 };

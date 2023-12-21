@@ -161,8 +161,9 @@ void InterfacePrincipale::setListePositionsObjets(const QList<int> &newListePosi
     listePositionsObjets = newListePositionsObjets;
 }
 
-void InterfacePrincipale::verifierCoordonneesCarres()
+int InterfacePrincipale::verifierCoordonneesCarres()
 {
+    int point = 0 ;
     foreach (QGraphicsItem* item, objetsGeneres) {
         carre = dynamic_cast<QGraphicsRectItem*>(item);
         if (carre) {
@@ -172,14 +173,18 @@ void InterfacePrincipale::verifierCoordonneesCarres()
             if (positionY >= 595 && positionY <= 615) {
                 qDebug() << "La coordonnée x du carré est entre 540 et 560.";
                 maScene->removeItem(carre);
+                // envoyer 1 avec signals
+                point = 1 ;
             } else {
                 qDebug() << "La coordonnée x du carré n'est pas entre 540 et 560.";
             }
         }
     }
+    return point ;
 }
-void InterfacePrincipale::verifierCoordonneesCercle()
+int InterfacePrincipale::verifierCoordonneesCercle()
 {
+    int point = 0 ;
     foreach (QGraphicsItem* item, objetsGeneres) {
         cercle = dynamic_cast<QGraphicsEllipseItem*>(item);
         if (cercle) {
@@ -189,14 +194,18 @@ void InterfacePrincipale::verifierCoordonneesCercle()
             if (positionY >= 595 && positionY <= 615) {
                 qDebug() << "La coordonnée x du cercle est entre 540 et 560.";
                 maScene->removeItem(cercle);
+                // envoyer 1 avec signals
+                point = 1 ;
             } else {
                 qDebug() << "La coordonnée x du cercle n'est pas entre 540 et 560.";
             }
         }
     }
+    return point ;
 }
-void InterfacePrincipale::verifierCoordonneesTriangle()
+int InterfacePrincipale::verifierCoordonneesTriangle()
 {
+    int point = 0 ;
     foreach (QGraphicsItem* item, objetsGeneres) {
         triangle = dynamic_cast<QGraphicsPolygonItem*>(item);
         if (triangle && triangle->data(0) == "Triangle") {
@@ -206,14 +215,18 @@ void InterfacePrincipale::verifierCoordonneesTriangle()
             if (positionY >= 595 && positionY <= 615) {
                 qDebug() << "La coordonnée x du triangle est entre 540 et 560.";
                 maScene->removeItem(triangle);
+                // envoyer 1 avec signals
+                point = 1 ;
             } else {
                 qDebug() << "La coordonnée x du triangle n'est pas entre 540 et 560.";
             }
         }
     }
+    return point ;
 }
-void InterfacePrincipale::verifierCoordonneesLosange()
+int InterfacePrincipale::verifierCoordonneesLosange()
 {
+    int point = 0 ;
     foreach (QGraphicsItem* item, objetsGeneres) {
         losange = dynamic_cast<QGraphicsPolygonItem*>(item);
         if (losange && losange->data(0) == "Losange") {
@@ -223,13 +236,15 @@ void InterfacePrincipale::verifierCoordonneesLosange()
             if (positionY >= 595 && positionY <= 615) {
                 qDebug() << "La coordonnée x du losange est entre 540 et 560.";
                 maScene->removeItem(losange);
-
+                // envoyer 1 avec signals
+                point = 1 ;
             } else {
                 qDebug() << "La coordonnée x du losange n'est pas entre 540 et 560.";
 
             }
         }
     }
+    return point ;
 }
 
 void InterfacePrincipale::deplacerFormesVersLeBas()
@@ -249,24 +264,26 @@ void InterfacePrincipale::deplacerFormesVersLeBas()
 
 void InterfacePrincipale::keyPressEvent(QKeyEvent* event)
 {
+    int point = 0 ;
     switch (event->key()) {
     case Qt::Key_A:
-        verifierCoordonneesCarres();
+        point = verifierCoordonneesCarres();
         break;
     case Qt::Key_Z:
-        verifierCoordonneesCercle();
+        point = verifierCoordonneesCercle();
         break;
     case Qt::Key_E:
-        verifierCoordonneesTriangle();
+        point = verifierCoordonneesTriangle();
         break;
     case Qt::Key_R:
-        verifierCoordonneesLosange();
+        point = verifierCoordonneesLosange();
         break;
         // Ajoutez d'autres cas pour les autres touches si nécessaire
     default:
         // Traitez les autres touches ici si nécessaire
         break;
     }
+    emit keyPressed(point);
 }
 
 
@@ -291,7 +308,7 @@ void InterfacePrincipale::setStart(bool newStart)
     if (start)
     {
         timerVitesseDescente();
-         timerJeux();
+        timerJeux();
     }
     else
     {
@@ -299,12 +316,57 @@ void InterfacePrincipale::setStart(bool newStart)
     }
 }
 
+const QList<int> &InterfacePrincipale::getScore() const
+{
+    return score;
+}
+
+void InterfacePrincipale::setScore(const QList<int> &newScore)
+{
+    score = newScore;
+}
+
+int InterfacePrincipale::getNbDeJoueurs() const
+{
+    return nbDeJoueurs;
+}
+
+void InterfacePrincipale::setNbDeJoueurs(int newNbDeJoueurs)
+{
+    nbDeJoueurs = newNbDeJoueurs;
+}
+
+void InterfacePrincipale::initialiserScore()
+{
+    switch (nbDeJoueurs){
+    case '1' :
+        ui->lcdNumberScoreJ1->display(score.at(0));
+        break;
+    case '2' :
+        ui->lcdNumberScoreJ1->display(score.at(0));
+        ui->lcdNumberScoreJ2->display(score.at(1));
+        break;
+    case '3' :
+        ui->lcdNumberScoreJ1->display(score.at(0));
+        ui->lcdNumberScoreJ2->display(score.at(1));
+        ui->lcdNumberScoreJ3->display(score.at(2));
+        break;
+    case '4' :
+        ui->lcdNumberScoreJ1->display(score.at(0));
+        ui->lcdNumberScoreJ2->display(score.at(1));
+        ui->lcdNumberScoreJ3->display(score.at(2));
+        ui->lcdNumberScoreJ4->display(score.at(3));
+
+        break;
+    }
+}
+
 void InterfacePrincipale::timerJeux()//a enlever
 {
     // Crée un minuteur avec une durée de 1 seconde
-   QTimer *timer = new QTimer(this);
+    QTimer *timer = new QTimer(this);
     timer->setInterval(1000);
-   connect(timer,&QTimer::timeout,this,&InterfacePrincipale::genererObjet);
+    connect(timer,&QTimer::timeout,this,&InterfacePrincipale::genererObjet);
     timer->start();
 }
 

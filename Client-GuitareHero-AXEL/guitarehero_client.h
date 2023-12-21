@@ -31,6 +31,8 @@ private slots:
 
     void on_pushButtonPret_clicked();
 
+    void handleKeyPressed(int score);
+
 private:
     Ui::GuitareHero_Client *ui;
     QTcpSocket *socketClient;

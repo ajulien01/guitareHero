@@ -24,6 +24,7 @@ Serveur::~Serveur()
 void Serveur::onQTcpSocket_connected()
 {
     ui->textEditMessage->append("Il y a une connexion");
+
 }
 
 void Serveur::onQTcpSocket_disconnected()
@@ -69,6 +70,7 @@ void Serveur::onQTcpSocket_readyRead()
                 listeClients.at(indexClient)->setPseudo(pseudo);
                 ui->textEditMessage->append(pseudo+"vient de se connecter");
                 envoyerPseudo();
+                envoyerPret();
                 break;
 
             case 'S':
@@ -76,10 +78,12 @@ void Serveur::onQTcpSocket_readyRead()
                 in >> score;
                 //calcul du nouveau score
                 score = calculerScore(score,indexClient);
+                qDebug() << "score:"<< score;
                 //ajout du nouveau score dans liste client
                 listeClients.at(indexClient)->setScoreJoueur(score);
                 QTextStream(&chaine)<<"score "<<listeClients.at(indexClient)->getPseudo()<<":"<<score;
                 ui->textEditMessage->append(chaine);
+                envoyerScore();
                 break;
             case 'Q':
                 //pret ou pas
@@ -160,7 +164,8 @@ float Serveur::calculerScore(float newScore, int indexClient)
             envoyerComboVitesse(6,0.30);
         }
     }
-    else if(newScore == 0)
+
+    if(newScore == 0)
     {
         if(scoreJoueur > 0)
             scoreJoueur --;
@@ -170,7 +175,7 @@ float Serveur::calculerScore(float newScore, int indexClient)
             envoyerComboVitesse(0,1);
     }
 
-    return newScore;
+    return scoreJoueur;
 }
 
 void Serveur::envoyerComboVitesse(int combo, float multiplicateurTimer)
@@ -207,7 +212,7 @@ void Serveur::envoyerScore()
     QChar commande('S');
     //envoie score
 
-    QList<float> scoreJoueurs;
+    QList<int> scoreJoueurs;
 
     //construire la liste des pret pas pret
     foreach(Client *client, listeClients)

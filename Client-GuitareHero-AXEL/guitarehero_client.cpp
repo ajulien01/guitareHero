@@ -11,20 +11,6 @@ GuitareHero_Client::GuitareHero_Client(QWidget *parent)
 {
     ui->setupUi(this);
     socketClient = new QTcpSocket(this);
-    /*  QGridLayout *grille= new QGridLayout (this);
-     // Placement sur la grille des objets présents sur ui
-     // les labels
-     grille->addWidget(ui->labelAdresseServeur,TAILLE,0,1,5);
-     grille->addWidget(ui->labelNumeroPort,TAILLE,6,1,5);
-     grille->addWidget(ui->labelInformation,TAILLE+3,12,1,5);
-     // les QLineEdit adresse et port
-     grille->addWidget(ui->lineEditAdresseServeur,TAILLE+1,0,1,5);
-     grille->addWidget(ui->spinBoxPortServeur,TAILLE+1,6,1,5);
-     // les QPushButton connexion et quitter
-     grille->addWidget(ui->pushButtonConnexion,TAILLE+2,0,1,5);
-     grille->addWidget(ui->pushButtonQuitter,TAILLE+2,6,1,5);
-     //connection signal/slot
-     */
     connect(socketClient, &QTcpSocket::connected, this, &::GuitareHero_Client::onQTcpSocket_connected);
     connect(socketClient, &QTcpSocket::disconnected, this, &::GuitareHero_Client::onQTcpSocket_disconnected);
     connect(socketClient, &QTcpSocket::readyRead, this, &::GuitareHero_Client::onQTcpSocket_readyRead);
@@ -32,9 +18,10 @@ GuitareHero_Client::GuitareHero_Client(QWidget *parent)
     QWidget *bidon=new QWidget();
     bidon->setGeometry(0,0,600,600);
     bidon->show();
-        jeux = new InterfacePrincipale(false,bidon);
-        jeux->show();
-        //jeux->hide();
+    jeux = new InterfacePrincipale(false,bidon);
+    jeux->show();
+    connect(jeux, &InterfacePrincipale::keyPressed, this, &GuitareHero_Client::handleKeyPressed);
+
 
 
 
@@ -123,7 +110,7 @@ void GuitareHero_Client::onQTcpSocket_readyRead()
     int combo ;
     float multiplicateurVitesse ;
     int musique ;
-    QList <float> scoreJoueurs;
+    QList <int> scoreJoueurs;
 
     if (socketClient->bytesAvailable() >= (qint64)sizeof(taille))
     {
@@ -164,7 +151,7 @@ void GuitareHero_Client::onQTcpSocket_readyRead()
 
             case 'Q':
                 in>>coordonnees>>etatJoueur>>nombreDeJoueurs >> start;
-                  jeux->setListePositionsObjets(coordonnees);
+                jeux->setListePositionsObjets(coordonnees);
                 qDebug() << nombreDeJoueurs ;
                 if (nombreDeJoueurs == 1 ){
                     if(etatJoueur.at(0) == true){
@@ -232,19 +219,18 @@ void GuitareHero_Client::onQTcpSocket_readyRead()
                         ui->lineEditJoueur4->setStyleSheet("background-color: rgb(227, 132, 132);");
                     }
                 }
-               if (start == true && jeux->getListePositionsObjets().size()>1){
-               //    this->hide();
-
-                  // jeux->show();
-                   jeux->setStart(true);
-              }
+                if (start == true && jeux->getListePositionsObjets().size()>1){
+                    this->hide();
+                    jeux->show();
+                    jeux->setStart(true);
+                }
                 break;
 
 
             case 'C' :
                 in >> coordonnees ;
 
-              //  qDebug() << coordonnees;
+                //  qDebug() << coordonnees;
                 jeux->setListePositionsObjets(coordonnees);
 
                 break ;
@@ -259,7 +245,9 @@ void GuitareHero_Client::onQTcpSocket_readyRead()
                 break ;
             case 'S' :
                 in >> scoreJoueurs >> nombreDeJoueurs;
-
+                qDebug() << "score : " [ scoreJoueurs.at(0)] ;
+                    jeux->setScore(scoreJoueurs);
+                    jeux->setNbDeJoueurs(nombreDeJoueurs);
                 break;
 
             }
@@ -284,5 +272,27 @@ void GuitareHero_Client::on_pushButtonPret_clicked()
         ui->pushButtonPret->setText("Pas Prêt");
         EnvoyerEtat(false);
     }
+}
+
+void GuitareHero_Client::handleKeyPressed(int score)
+{
+    qDebug() << "score send";
+
+    quint16 taille=0;
+    QBuffer tampon;
+    QChar commande('S');
+    tampon.open(QIODevice::WriteOnly);
+    // association du tampon au flux de sortie
+    QDataStream out(&tampon);
+    // construction de la trame
+    out<<taille<<commande<<score;
+    // calcul de la taille de la trame
+    taille=(static_cast<quint16>(tampon.size()))-sizeof(taille);
+    // placement sur la premiere position du flux pour pouvoir modifier la taille
+    tampon.seek(0);
+    //modification de la trame avec la taille reel de la trame
+    out<<taille;
+    // envoi du QByteArray du tampon via la socket
+    socketClient->write(tampon.buffer());
 }
 
