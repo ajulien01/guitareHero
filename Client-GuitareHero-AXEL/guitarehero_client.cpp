@@ -35,7 +35,7 @@ GuitareHero_Client::~GuitareHero_Client()
 void GuitareHero_Client::EnvoyerPseudo()
 {
     pseudo = ui->lineEditPseudo->text();
-    qDebug() << "pseudo send";
+    //qDebug() << "pseudo send";
 
     quint16 taille=0;
     QBuffer tampon;
@@ -89,7 +89,7 @@ void GuitareHero_Client::on_pushButtonConnexion_clicked()
 
 void GuitareHero_Client::onQTcpSocket_connected()
 {
-    qDebug()<<"connexion";
+  //  qDebug()<<"connexion";
     EnvoyerPseudo();
 }
 
@@ -125,7 +125,7 @@ void GuitareHero_Client::onQTcpSocket_readyRead()
             // envoyer les places pour le vol ref
             case 'P':
                 in>>PseudoJoueur>>nombreDeJoueurs;
-                qDebug() << nombreDeJoueurs ;
+             //   qDebug() << nombreDeJoueurs ;
                 if (nombreDeJoueurs == 1 ){
                     ui->lineEditJoueur1->setText(PseudoJoueur.at(0));
                 }
@@ -152,7 +152,7 @@ void GuitareHero_Client::onQTcpSocket_readyRead()
             case 'Q':
                 in>>coordonnees>>etatJoueur>>nombreDeJoueurs >> start;
                 jeux->setListePositionsObjets(coordonnees);
-                qDebug() << nombreDeJoueurs ;
+               // qDebug() << nombreDeJoueurs ;
                 if (nombreDeJoueurs == 1 ){
                     if(etatJoueur.at(0) == true){
                         ui->lineEditJoueur1->setStyleSheet("background-color: rgb(132, 227, 132);");
@@ -245,8 +245,8 @@ void GuitareHero_Client::onQTcpSocket_readyRead()
                 break ;
             case 'S' :
                 in >> scoreJoueurs >> nombreDeJoueurs;
-                qDebug() << "nb joueur:" << nombreDeJoueurs;
-                qDebug() << "score : " << scoreJoueurs.at(0);
+          //      qDebug() << "nb joueur:" << nombreDeJoueurs;
+                qDebug() << "score case : " << scoreJoueurs.at(0);
                     jeux->setScore(scoreJoueurs);
                     jeux->setNbDeJoueurs(nombreDeJoueurs);
                 break;
@@ -277,7 +277,7 @@ void GuitareHero_Client::on_pushButtonPret_clicked()
 
 void GuitareHero_Client::handleKeyPressed(int score)
 {
-    qDebug() << "score send";
+   // qDebug() << "score send";
 
     quint16 taille=0;
     QBuffer tampon;

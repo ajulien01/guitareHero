@@ -19,7 +19,7 @@ public:
     void setCombo(int newCombo);
 
 private:
-    float scoreJoueur=0;
+    int scoreJoueur=0;
     QString pseudo;
     QTcpSocket *sockClient;
     bool pret=false;

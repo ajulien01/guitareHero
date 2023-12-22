@@ -70,7 +70,6 @@ void Serveur::onQTcpSocket_readyRead()
                 listeClients.at(indexClient)->setPseudo(pseudo);
                 ui->textEditMessage->append(pseudo+"vient de se connecter");
                 envoyerPseudo();
-                envoyerPret();
                 break;
 
             case 'S':
@@ -85,6 +84,7 @@ void Serveur::onQTcpSocket_readyRead()
                 ui->textEditMessage->append(chaine);
                 envoyerScore();
                 break;
+
             case 'Q':
                 //pret ou pas
                 in >> pret;

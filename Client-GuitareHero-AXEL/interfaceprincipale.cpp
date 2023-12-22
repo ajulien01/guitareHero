@@ -1,4 +1,4 @@
-#include "interfaceprincipale.h"
+﻿#include "interfaceprincipale.h"
 #include "ui_interfaceprincipale.h"
 
 #include <QRandomGenerator>
@@ -124,7 +124,7 @@ void InterfacePrincipale::genererObjet()
         if (valeurAleatoire == 2) {
             // Cercle
             int rayon = 25;
-            center = QPoint(CercleZ, -50);
+            center = QPoint(static_cast<int>(CercleZ), -50);
             cercle = new QGraphicsEllipseItem(center.x() - rayon, center.y() - rayon, rayon*2, rayon*2);
             cercle->setBrush(Qt::red);
             maScene->addItem(cercle);
@@ -132,7 +132,7 @@ void InterfacePrincipale::genererObjet()
         }
         if (valeurAleatoire == 3) {
             // Triangle
-            center = QPoint(TriangleZ, -50);
+            center = QPoint(static_cast<int>(TriangleZ), -50);
             QPolygonF trianglePolygon;
             trianglePolygon << QPoint(center.x(), center.y() - 25)
                             << QPoint(center.x() + 25, center.y() + 25)
@@ -146,7 +146,7 @@ void InterfacePrincipale::genererObjet()
         if (valeurAleatoire == 4) {
             // Losange
             int tailleCote = 50;
-            center = QPoint(LosangeZ, -50);
+            center = QPoint(static_cast<int>(LosangeZ), -50);
             QPolygonF losangePolygon;
             losangePolygon << QPoint(center.x(), center.y() - tailleCote/2)
                            << QPoint(center.x() + tailleCote/2, center.y())
@@ -183,7 +183,7 @@ int InterfacePrincipale::verifierCoordonneesCarres()
         if (carre) {
             int positionX = carre->pos().x();
             int positionY = carre->pos().y();
-            qDebug() << "Coordonnées du carré : (" << positionX << ", " << positionY << ")";
+          //  qDebug() << "Coordonnées du carré : (" << positionX << ", " << positionY << ")";
             if (positionY >= 595 && positionY <= 615) {
                 qDebug() << "La coordonnée x du carré est entre 540 et 560.";
                 maScene->removeItem(carre);
@@ -191,7 +191,7 @@ int InterfacePrincipale::verifierCoordonneesCarres()
                 point = 1 ;
                 colisionSound();
             } else {
-                qDebug() << "La coordonnée x du carré n'est pas entre 540 et 560.";
+               // qDebug() << "La coordonnée x du carré n'est pas entre 540 et 560.";
                 toucheSound();
             }
         }
@@ -206,15 +206,15 @@ int InterfacePrincipale::verifierCoordonneesCercle()
         if (cercle) {
             int positionX = cercle->pos().x();
             int positionY = cercle->pos().y();
-            qDebug() << "Coordonnées du cercle : (" << positionX << ", " << positionY << ")";
+          //  qDebug() << "Coordonnées du cercle : (" << positionX << ", " << positionY << ")";
             if (positionY >= 595 && positionY <= 615) {
-                qDebug() << "La coordonnée x du cercle est entre 540 et 560.";
+              //  qDebug() << "La coordonnée x du cercle est entre 540 et 560.";
                 maScene->removeItem(cercle);
                 // envoyer 1 avec signals
                 colisionSound();
                 point = 1 ;
             } else {
-                qDebug() << "La coordonnée x du cercle n'est pas entre 540 et 560.";
+               // qDebug() << "La coordonnée x du cercle n'est pas entre 540 et 560.";
                 toucheSound();
             }
         }
@@ -229,15 +229,15 @@ int InterfacePrincipale::verifierCoordonneesTriangle()
         if (triangle && triangle->data(0) == "Triangle") {
             int positionX = triangle->pos().x();
             int positionY = triangle->pos().y();
-            qDebug() << "Coordonnées du triangle : (" << positionX << ", " << positionY << ")";
+          //  qDebug() << "Coordonnées du triangle : (" << positionX << ", " << positionY << ")";
             if (positionY >= 595 && positionY <= 615) {
-                qDebug() << "La coordonnée x du triangle est entre 540 et 560.";
+             //   qDebug() << "La coordonnée x du triangle est entre 540 et 560.";
                 maScene->removeItem(triangle);
                 // envoyer 1 avec signals
                 point = 1 ;
                 colisionSound();
             } else {
-                qDebug() << "La coordonnée x du triangle n'est pas entre 540 et 560.";
+            //    qDebug() << "La coordonnée x du triangle n'est pas entre 540 et 560.";
                 toucheSound();
             }
         }
@@ -252,15 +252,15 @@ int InterfacePrincipale::verifierCoordonneesLosange()
         if (losange && losange->data(0) == "Losange") {
             int positionX = losange->pos().x();
             int positionY = losange->pos().y();
-            qDebug() << "Coordonnées du losange : (" << positionX << ", " << positionY << ")";
+           // qDebug() << "Coordonnées du losange : (" << positionX << ", " << positionY << ")";
             if (positionY >= 595 && positionY <= 615) {
-                qDebug() << "La coordonnée x du losange est entre 540 et 560.";
+            //    qDebug() << "La coordonnée x du losange est entre 540 et 560.";
                 maScene->removeItem(losange);
                 // envoyer 1 avec signals
                 point = 1 ;
                 colisionSound();
             } else {
-                qDebug() << "La coordonnée x du losange n'est pas entre 540 et 560.";
+             //   qDebug() << "La coordonnée x du losange n'est pas entre 540 et 560.";
                 toucheSound();
             }
         }
@@ -275,10 +275,10 @@ void InterfacePrincipale::deplacerFormesVersLeBas()
         item->moveBy(0, 1);
         int positionY = item->pos().y();
         if(positionY>700){
-            qDebug() << "Coordonnées du carré dépassé : (" << positionY << ")";
+         //   qDebug() << "Coordonnées du carré dépassé : (" << positionY << ")";
             item->hide();
             item->setPos(10,10);
-            maScene->removeItem(item);
+            //maScene->removeItem(item);
         }
     }
 
@@ -290,6 +290,7 @@ void InterfacePrincipale::keyPressEvent(QKeyEvent* event)
     switch (event->key()) {
     case Qt::Key_A:
         point = verifierCoordonneesCarres();
+
         break;
     case Qt::Key_Z:
         point = verifierCoordonneesCercle();
@@ -305,9 +306,9 @@ void InterfacePrincipale::keyPressEvent(QKeyEvent* event)
         // Traitez les autres touches ici si nécessaire
         break;
     }
-
     emit keyPressed(point);
     initialiserScore();
+
 }
 
 
@@ -317,7 +318,7 @@ void InterfacePrincipale::keyPressEvent(QKeyEvent* event)
 int InterfacePrincipale::genererValeurAleatoire()//a enlever
 {
     int valeurAleatoire = QRandomGenerator::global()->bounded(1, 5);
-    qDebug() << "Valeur aléatoire : " << valeurAleatoire;//debug
+  //  qDebug() << "Valeur aléatoire : " << valeurAleatoire;//debug
     return valeurAleatoire;
 }
 
@@ -358,7 +359,7 @@ int InterfacePrincipale::getNbDeJoueurs() const
 void InterfacePrincipale::setNbDeJoueurs(int newNbDeJoueurs)
 {
     nbDeJoueurs = newNbDeJoueurs;
-    qDebug () << "Set nb joueur : " << nbDeJoueurs;
+   // qDebug () << "Set nb joueur : " << nbDeJoueurs;
 }
 
 void InterfacePrincipale::toucheSound()
@@ -382,6 +383,7 @@ void InterfacePrincipale::initialiserScore()
 
     case 1:
         ui->lcdNumberScoreJ1->display(score.at(0));
+        qDebug() << "score joueur 1 initialiser score :"<< score.at(0);
         break;
     case 2:
         ui->lcdNumberScoreJ1->display(score.at(0));
