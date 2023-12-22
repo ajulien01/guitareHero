@@ -7,6 +7,7 @@
 #include <QWidget>
 #include <QTcpSocket>
 #include <interfaceprincipale.h>
+#include "score.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class GuitareHero_Client; }
@@ -32,6 +33,7 @@ private slots:
     void on_pushButtonPret_clicked();
 
     void handleKeyPressed(int score);
+    void finDePartie(bool info);
 
 private:
     Ui::GuitareHero_Client *ui;
@@ -40,5 +42,7 @@ private:
     QString pseudo;
     QString etat;
     InterfacePrincipale * jeux;
+    score * resultat;
+    QWidget * bidon ;
 };
 #endif // GUITAREHERO_CLIENT_H

@@ -3,7 +3,7 @@
  <class>score</class>
  <widget class="QWidget" name="score">
   <property name="enabled">
-   <bool>false</bool>
+   <bool>true</bool>
   </property>
   <property name="geometry">
    <rect>
@@ -112,7 +112,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>7</x>
@@ -147,7 +147,7 @@
          </font>
         </property>
         <property name="text">
-         <string>La Victoire revien à :</string>
+         <string>La Victoire revient à :</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -217,6 +217,19 @@
      </layout>
     </item>
    </layout>
+  </widget>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>520</x>
+     <y>30</y>
+     <width>101</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Afficher Score</string>
+   </property>
   </widget>
  </widget>
  <resources/>

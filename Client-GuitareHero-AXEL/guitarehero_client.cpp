@@ -15,13 +15,15 @@ GuitareHero_Client::GuitareHero_Client(QWidget *parent)
     connect(socketClient, &QTcpSocket::disconnected, this, &::GuitareHero_Client::onQTcpSocket_disconnected);
     connect(socketClient, &QTcpSocket::readyRead, this, &::GuitareHero_Client::onQTcpSocket_readyRead);
     connect(socketClient, &QTcpSocket::errorOccurred, this, &::GuitareHero_Client::onQTcpSocket_errorOccured);
-    QWidget *bidon=new QWidget();
+    bidon=new QWidget();
     bidon->setGeometry(0,0,600,600);
     bidon->show();
     jeux = new InterfacePrincipale(false,bidon);
     jeux->show();
     connect(jeux, &InterfacePrincipale::keyPressed, this, &GuitareHero_Client::handleKeyPressed);
+    resultat = new score();
 
+    connect(jeux, &InterfacePrincipale::finDePartie, this ,&GuitareHero_Client::finDePartie);
 
 
 
@@ -251,6 +253,15 @@ void GuitareHero_Client::onQTcpSocket_readyRead()
                     jeux->setNbDeJoueurs(nombreDeJoueurs);
                 break;
 
+            case 'F' :
+                in >> nombreDeJoueurs >> PseudoJoueur >> scoreJoueurs ;
+                bidon->hide();
+                resultat->show();
+
+                resultat->setPseudoJoueur(PseudoJoueur);
+                resultat->setNbDeJoueur(nombreDeJoueurs);
+                resultat->setScoreJoueur(scoreJoueurs);
+                break ;
             }
         }
     }
@@ -295,5 +306,27 @@ void GuitareHero_Client::handleKeyPressed(int score)
     out<<taille;
     // envoi du QByteArray du tampon via la socket
     socketClient->write(tampon.buffer());
+}
+
+void GuitareHero_Client::finDePartie(bool info)
+{
+    // qDebug() << "info send";
+
+     quint16 taille=0;
+     QBuffer tampon;
+     QChar commande('F');
+     tampon.open(QIODevice::WriteOnly);
+     // association du tampon au flux de sortie
+     QDataStream out(&tampon);
+     // construction de la trame
+     out<<taille<<commande<<info;
+     // calcul de la taille de la trame
+     taille=(static_cast<quint16>(tampon.size()))-sizeof(taille);
+     // placement sur la premiere position du flux pour pouvoir modifier la taille
+     tampon.seek(0);
+     //modification de la trame avec la taille reel de la trame
+     out<<taille;
+     // envoi du QByteArray du tampon via la socket
+     socketClient->write(tampon.buffer());
 }
 

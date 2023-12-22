@@ -5,5 +5,7 @@
         <file>lastchristmas.mp3</file>
         <file>ping.mp3</file>
         <file>punch.mp3</file>
+        <file>pew.mp3</file>
+        <file>mario.mp3</file>
     </qresource>
 </RCC>

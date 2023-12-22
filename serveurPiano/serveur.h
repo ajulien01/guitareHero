@@ -37,7 +37,8 @@ private slots:
     //generateur de coordonnées
     int generValeurAleatoire();
     void envoyerCoordonnees();
-
+    //void envoyer infos
+    void envoyerInfos();
 
 private:
     Ui::Serveur *ui;

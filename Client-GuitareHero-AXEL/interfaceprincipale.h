@@ -22,6 +22,7 @@ class InterfacePrincipale : public QWidget
 private slots:
     void timerJeux();
     void timerVitesseDescente();
+    void stopTimer();
 public:
      InterfacePrincipale(bool start = false ,QWidget *parent = nullptr);
     ~InterfacePrincipale();
@@ -77,8 +78,9 @@ private:
     QAudioOutput sortieAudioColision;
     QMediaPlayer musique;
     QAudioOutput musiquefond;
-    signals:
+signals:
         void keyPressed(int score);
+        void finDePartie(bool timeout);
 
 
 };

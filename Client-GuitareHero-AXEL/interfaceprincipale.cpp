@@ -84,13 +84,23 @@ InterfacePrincipale::InterfacePrincipale(bool start , QWidget *parent)
 
     //son colision
     colision.setAudioOutput(&sortieAudioColision);
-    colision.setSource(QUrl("qrc:/sounds/punch.mp3")); //origine du fichier son
+    colision.setSource(QUrl("qrc:/sounds/mario.mp3")); //origine du fichier son
     sortieAudioColision.setVolume(1);
 
-    //son musique
-    musique.setAudioOutput(&musiquefond);
-    musique.setSource(QUrl("qrc:/sounds/lastchristmas.mp3")); //origine du fichier son
-    musiquefond.setVolume(100);
+    // Liste de fichiers sonores disponibles
+            QStringList fichiersSonores;
+            fichiersSonores << "qrc:/sounds/babyshark.mp3" << "qrc:/sounds/jinglebells.mp3" << "qrc:/sounds/lastchristmas.mp3";
+
+            // Génère un index aléatoire basé sur le nombre de fichiers sonores disponibles
+            int indexAleatoire = QRandomGenerator::global()->bounded(fichiersSonores.size());
+
+            // Sélectionne le fichier sonore correspondant à l'index aléatoire
+            QString fichierSonoreSelectionne = fichiersSonores[indexAleatoire];
+
+            // Utilisez le fichier sonore sélectionné pour votre objet QMediaPlayer
+            musique.setAudioOutput(&musiquefond);
+            musique.setSource(QUrl(fichierSonoreSelectionne));
+            musiquefond.setVolume(100);
 
     musique.play();
 }
@@ -404,15 +414,35 @@ void InterfacePrincipale::initialiserScore()
     }
 }
 
-void InterfacePrincipale::timerJeux()//a enlever
+void InterfacePrincipale::timerJeux()
 {
     // Crée un minuteur avec une durée de 1 seconde
     QTimer *timer = new QTimer(this);
     timer->setInterval(1000);
-    connect(timer,&QTimer::timeout,this,&InterfacePrincipale::genererObjet);
+    connect(timer, &QTimer::timeout, this, &InterfacePrincipale::genererObjet);
 
+    // Démarre le minuteur
     timer->start();
+
+    // Définit un délai d'une minute avant d'appeler la fonction stopTimer
+    QTimer::singleShot(50000, this, &InterfacePrincipale::stopTimer);
 }
+
+void InterfacePrincipale::stopTimer()
+{
+    // Arrête le minuteur
+    QTimer *timer = qobject_cast<QTimer*>(sender());
+    if (timer)
+    {
+        timer->stop();
+        timer->deleteLater();
+    }
+    this->close();
+
+    //ouverture page fin de partie
+    emit finDePartie(true);
+}
+
 
 void InterfacePrincipale::timerVitesseDescente()//a enlever
 {
